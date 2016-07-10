@@ -8,14 +8,16 @@ import ca.uhn.hl7v2.model.v24.datatype.*;
 import ca.uhn.hl7v2.model.v24.message.ADT_A05;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.Parser;
+import model.PatientHL7;
 
 public class ParserHL7 {
-    public static void startSimpleExample() {
+    public void startSimpleExample() {
         String msg = "MSH|^~\\&|IPM|LSP|RAD|RGQ|20100705100137||ADT^A28|765043596|P|2.4|12478673\r" +
                 "EVN|A28|20100705100131\r" +
                 "PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||4444444444|5555555555||M|||||||||||||20160709224441|Y\r" +
                 "PD1|||PracticeName^^PracticeCode|GPCode^GPSurname^GPForename^^^DR^^NATGP\r";
 
+        PatientHL7 patientHL7 = new PatientHL7();
         HapiContext context = new DefaultHapiContext();
         context.getParserConfiguration().setValidating(false);
         //Parser p = context.getGenericParser();
