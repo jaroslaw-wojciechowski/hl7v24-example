@@ -15,9 +15,7 @@ public class ParserHL7 {
         String msg = "MSH|^~\\&|IPM|LSP|RAD|RGQ|20100705100137||ADT^A28|765043596|P|2.4|12478673\r" +
                 "EVN|A28|20100705100131\r" +
                 "PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||4444444444|5555555555||M|||||||||||||20160709224441|Y\r" +
-                //"PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||4444444444|5555555555||M||||||||||||||\r" +
                 "PD1|||PracticeName^^PracticeCode|GPCode^GPSurname^GPForename^^^DR^^NATGP\r";
-
 
         HapiContext context = new DefaultHapiContext();
         context.getParserConfiguration().setValidating(false);
@@ -134,30 +132,5 @@ public class ParserHL7 {
         CE martialStatus = adtMsg.getPID().getMaritalStatus();
         patientHL7.setMartialStatus(martialStatus);
         System.out.println("marital Status: " + martialStatus.getIdentifier());
-
-        //ignore others?
-        //multipleBirth[x]	PID-24 (bool), PID-25 (integer)
-        //photo	OBX-5 - needs a profile
-        //contact
-        //relationship	NK1-7, NK1-3
-        //name	NK1-2
-        //telecom	NK1-5, NK1-6, NK1-40
-        //address	NK1-4
-        //gender	NK1-15
-        //organization	NK1-13, NK1-30, NK1-31, NK1-32, NK1-41
-        //period
-        //        animal
-        //species	PID-35
-        //breed	PID-37
-        //genderStatus	N/A
-        //communication
-        //language	PID-15, LAN-2
-        //preferred	PID-15
-        //careProvider	PD1-4
-        //managingOrganization
-        //link
-        //other	PID-3, MRG-1
-        //type
-
     }
 }

@@ -57,45 +57,67 @@ public class PatientHL7 {
         this.addresses = addresses;
     }
 
-    public void setMartialStatus(CE martialStatus) {
-        this.martialStatus = martialStatus;
-    }
-
     public String getPatientIdentifierId() {
-        return identifier[0].getID().toString();
+        if (identifier.length > 0) {
+            return identifier[0].getID().toString();
+        }
+        return null;
     }
 
     public String getPatientIdentifierNamespace() {
-        return identifier[0].getAssigningAuthority().getNamespaceID().toString();
+        if (identifier.length > 0) {
+            return identifier[0].getAssigningAuthority().getNamespaceID().toString();
+        }
+        return null;
     }
 
     public String getPatientIdentifierTypeCode() {
-        return identifier[0].getIdentifierTypeCode().toString();
+        if (identifier.length > 0) {
+            return identifier[0].getIdentifierTypeCode().toString();
+        }
+        return null;
     }
 
     public String getPatientNameGiven() {
-        return patientNames[0].getGivenName().toString();
+        if (patientNames.length > 0) {
+            return patientNames[0].getGivenName().toString();
+        }
+        return null;
     }
 
     public String getPatientNameFamily() {
-        return patientNames[0].getFamilyName().getSurname().toString();
+        if (patientNames.length > 0) {
+            return patientNames[0].getFamilyName().getSurname().toString();
+        }
+        return null;
     }
 
     public String getPatientNameSuffix() {
-        return patientNames[0].getSuffixEgJRorIII().toString();
+        if (patientNames.length > 0) {
+            return patientNames[0].getSuffixEgJRorIII().toString();
+        }
+        return null;
     }
 
     public String getPatientNamePrefix() {
-        return patientNames[0].getPrefixEgDR().toString();
-
+        if (patientNames.length > 0) {
+            return patientNames[0].getPrefixEgDR().toString();
+        }
+        return null;
     }
 
     public String getPatienPhoneHome() {
-        return phoneHome[0].get9999999X99999CAnyText().toString();
+        if (phoneHome.length > 0) {
+            return phoneHome[0].get9999999X99999CAnyText().toString();
+        }
+        return null;
     }
 
     public String getPatienPhoneBusiness() {
-        return phoneBusiness[0].get9999999X99999CAnyText().toString();
+        if (phoneBusiness.length > 0) {
+            return phoneBusiness[0].get9999999X99999CAnyText().toString();
+        }
+        return null;
     }
 
     public String getPatientGender() {
@@ -123,20 +145,35 @@ public class PatientHL7 {
         return martialStatus;
     }
 
-    /*
-        patientFhir.addAddress().setCity("RandomCity");
-        patientFhir.addAddress().setState("RandomState");
-        patientFhir.addAddress().setPostalCode("80-010");
-        patientFhir.addAddress().setCountry("RandomCountry");
-
-            System.out.println("\taddress tokens: " + address.getStreetAddress().getStreetOrMailingAddress() + " "
-                    + address.getOtherDesignation() + " "
-                    + address.getCity() + " "
-                    + address.getStateOrProvince() + " "
-                    + address.getZipOrPostalCode());
-     */
+    public void setMartialStatus(CE martialStatus) {
+        this.martialStatus = martialStatus;
+    }
 
     public String getStreet() {
-        return addresses[0].getStreetAddress().getStreetOrMailingAddress().toString();
+        if (addresses.length > 0) {
+            return addresses[0].getStreetAddress().getStreetOrMailingAddress().toString();
+        }
+        return null;
+    }
+
+    public String getCity() {
+        if (addresses.length > 0) {
+            return addresses[0].getCity().toString();
+        }
+        return null;
+    }
+
+    public String getState() {
+        if (addresses.length > 0) {
+            return addresses[0].getStateOrProvince().toString();
+        }
+        return null;
+    }
+
+    public String getPostalCode() {
+        if (addresses.length > 0) {
+            return addresses[0].getZipOrPostalCode().toString();
+        }
+        return null;
     }
 }
