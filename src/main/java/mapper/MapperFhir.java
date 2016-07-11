@@ -1,12 +1,13 @@
 package mapper;
 
 import ca.uhn.fhir.context.FhirContext;
+import model.PatientHL7;
 import org.hl7.fhir.dstu3.model.*;
 
 import java.util.UUID;
 
 public class MapperFhir {
-    public void mapToFhir() {
+    public void mapToFhir(PatientHL7 patientHL7) {
         // Create a context for DSTU3
         FhirContext ctx = FhirContext.forDstu3();
 

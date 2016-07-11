@@ -11,13 +11,13 @@ import ca.uhn.hl7v2.parser.Parser;
 import model.PatientHL7;
 
 public class ParserHL7 {
-    public void startSimpleExample() {
+    public void startSimpleExample(PatientHL7 patientHL7) {
         String msg = "MSH|^~\\&|IPM|LSP|RAD|RGQ|20100705100137||ADT^A28|765043596|P|2.4|12478673\r" +
                 "EVN|A28|20100705100131\r" +
                 "PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||4444444444|5555555555||M|||||||||||||20160709224441|Y\r" +
                 "PD1|||PracticeName^^PracticeCode|GPCode^GPSurname^GPForename^^^DR^^NATGP\r";
 
-        PatientHL7 patientHL7 = new PatientHL7();
+
         HapiContext context = new DefaultHapiContext();
         context.getParserConfiguration().setValidating(false);
         //Parser p = context.getGenericParser();
@@ -55,6 +55,7 @@ public class ParserHL7 {
 
         //identifier	PID-3
         CX[] identifier = adtMsg.getPID().getPid3_PatientIdentifierList();
+        patientHL7.setIdentifier(identifier);
         System.out.println("identifiers:");
         for (CX cx : identifier) {
             System.out.println("\tidentifier: " + cx);
@@ -67,6 +68,7 @@ public class ParserHL7 {
         //active ??
         //name	PID-5, PID-9
         XPN[] patientNames = adtMsg.getPID().getPatientName();
+        patientHL7.setPatientNames(patientNames);
         System.out.println("patient names:");
         for (XPN patientName : patientNames) {
             FN familyName = patientName.getFamilyName();
@@ -83,12 +85,14 @@ public class ParserHL7 {
 
         //telecom PID-13, PID-14, PID-40
         XTN[] phoneHome = adtMsg.getPID().getPhoneNumberHome();
+        patientHL7.setPhoneHome(phoneHome);
         System.out.println("phone Home: ");
         for (XTN phone : phoneHome) {
             System.out.println("\tphone: " + phone.get9999999X99999CAnyText());
         }
 
         XTN[] phoneBusiness = adtMsg.getPID().getPhoneNumberBusiness();
+        patientHL7.setPhoneBusiness(phoneBusiness);
         System.out.println("phone Business: ");
         for (XTN phone : phoneBusiness) {
             System.out.println("\tphone: " + phone.get9999999X99999CAnyText());
@@ -96,20 +100,25 @@ public class ParserHL7 {
 
         //gender	PID-8
         IS gender = adtMsg.getPID().getAdministrativeSex();
+        patientHL7.setGender(gender);
         System.out.println("gender: " + gender.getValue());
 
         //birthDate	PID-7
         TS dob = adtMsg.getPID().getDateTimeOfBirth();
+        patientHL7.setDateTimeOfBirth(dob);
         System.out.println("birth date: " + dob.getTimeOfAnEvent());
 
         //deceased[x]	PID-30 (bool) and PID-29 (datetime)
-        TS deceasedDate = adtMsg.getPID().getPatientDeathDateAndTime();
         ID deceasedInd = adtMsg.getPID().getPatientDeathIndicator();
+        TS deceasedDate = adtMsg.getPID().getPatientDeathDateAndTime();
+        patientHL7.setDeceasedInd(deceasedInd);
+        patientHL7.setDeceasedDate(deceasedDate);
         System.out.println("is dead: " + deceasedInd);
         System.out.println("death date: " + deceasedDate.getTimeOfAnEvent());
 
         //address	PID-11
         XAD[] addresses = adtMsg.getPID().getPatientAddress();
+        patientHL7.setAddresses(addresses);
         System.out.println("addresses: ");
         for (XAD address : addresses) {
             System.out.println("\taddress: " + address);
@@ -122,6 +131,7 @@ public class ParserHL7 {
 
         //maritalStatus	PID-16
         CE martialStatus = adtMsg.getPID().getMaritalStatus();
+        patientHL7.setMartialStatus(martialStatus);
         System.out.println("marital Status: " + martialStatus.getIdentifier());
 
         //ignore others?
@@ -147,5 +157,6 @@ public class ParserHL7 {
         //link
         //other	PID-3, MRG-1
         //type
+
     }
 }
