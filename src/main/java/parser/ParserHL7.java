@@ -11,10 +11,11 @@ import ca.uhn.hl7v2.parser.Parser;
 import model.PatientHL7;
 
 public class ParserHL7 {
-    public void startSimpleExample(PatientHL7 patientHL7) {
+    public void startSimpleExample(PatientHL7 patientHL7) throws HL7Exception {
         String msg = "MSH|^~\\&|IPM|LSP|RAD|RGQ|20100705100137||ADT^A28|765043596|P|2.4|12478673\r" +
                 "EVN|A28|20100705100131\r" +
                 "PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||4444444444|5555555555||M|||||||||||||20160709224441|Y\r" +
+                //"PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||4444444444|5555555555||M||||||||||||||\r" +
                 "PD1|||PracticeName^^PracticeCode|GPCode^GPSurname^GPForename^^^DR^^NATGP\r";
 
 
@@ -60,7 +61,6 @@ public class ParserHL7 {
         for (CX cx : identifier) {
             System.out.println("\tidentifier: " + cx);
             System.out.println("\tidentifier tokens: " + cx.getID() + " "
-                    + cx.getAssigningAuthority().getNamespaceID() + " "
                     + cx.getAssigningAuthority().getNamespaceID() + " "
                     + cx.getIdentifierTypeCode());
         }
@@ -111,6 +111,7 @@ public class ParserHL7 {
         //deceased[x]	PID-30 (bool) and PID-29 (datetime)
         ID deceasedInd = adtMsg.getPID().getPatientDeathIndicator();
         TS deceasedDate = adtMsg.getPID().getPatientDeathDateAndTime();
+        System.out.println("deceasedInd parsed: " + deceasedInd);
         patientHL7.setDeceasedInd(deceasedInd);
         patientHL7.setDeceasedDate(deceasedDate);
         System.out.println("is dead: " + deceasedInd);

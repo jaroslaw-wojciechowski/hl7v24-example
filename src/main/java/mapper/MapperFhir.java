@@ -1,16 +1,80 @@
 package mapper;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.hl7v2.HL7Exception;
 import model.PatientHL7;
+import org.hl7.fhir.dstu3.exceptions.FHIRException;
 import org.hl7.fhir.dstu3.model.*;
 
-import java.util.UUID;
+import java.text.ParseException;
 
 public class MapperFhir {
-    public void mapToFhir(PatientHL7 patientHL7) {
+    public void mapToFhir(PatientHL7 patientHL7) throws FHIRException, ParseException, HL7Exception {
         // Create a context for DSTU3
         FhirContext ctx = FhirContext.forDstu3();
+        Patient patientFhir = new Patient();
 
+        patientFhir.addIdentifier()
+                .setSystem(patientHL7.getPatientIdentifierNamespace() + " " + patientHL7.getPatientIdentifierTypeCode())
+                .setValue(patientHL7.getPatientIdentifierId());
+
+        patientFhir.addName()
+                .addGiven(patientHL7.getPatientNameGiven())
+                .addFamily(patientHL7.getPatientNameFamily())
+                .addFamily("TEST")
+                .addPrefix(patientHL7.getPatientNamePrefix())
+                .addSuffix(patientHL7.getPatientNameSuffix());
+
+        patientFhir.addTelecom()
+                .setSystem(ContactPoint.ContactPointSystem.PHONE)
+                .setValue(patientHL7.getPatienPhoneHome())
+                .setUse(ContactPoint.ContactPointUse.HOME);
+
+        patientFhir.addTelecom()
+                .setSystem(ContactPoint.ContactPointSystem.PHONE)
+                .setValue(patientHL7.getPatienPhoneBusiness())
+                .setUse(ContactPoint.ContactPointUse.WORK);
+
+        patientFhir.setGender(Enumerations.AdministrativeGender.fromCode(patientHL7.getPatientGender()));
+
+        patientFhir.setBirthDate(patientHL7.getPatientDateTimeOfBirth());
+
+        //deceased can be date or boolean:
+        if ((!patientHL7.getPatientDeceasedIndicator().isEmpty()) && (patientHL7.getPatientDeceasedIndicator().toString().equals("Y"))) {
+            patientFhir.setDeceased(new BooleanType().setValue(true));
+        }
+        if (!patientHL7.getPatientDeceasedDate().isEmpty()) {
+            patientFhir.setDeceased(new DateTimeType().setValue(patientHL7.getPatientDeceasedDate().getTimeOfAnEvent().getValueAsDate()));
+        }
+
+        patientFhir.getMaritalStatus().addCoding().setCode(patientHL7.getMartialStatus().getIdentifier().toString());
+
+        /*
+             "address": [
+        {
+          "use": "home",
+          "type": "both",
+          "line": [
+            "534 Erewhon St"
+          ],
+          "city": "PleasantVille",
+          "district": "Rainbow",
+          "state": "Vic",
+          "postalCode": "3999",
+          "period": {
+            "start": "1974-12-25"
+          }
+        }
+      ],
+         */
+
+        patientFhir.addAddress().setCity("RandomCity");
+        patientFhir.addAddress().setState("RandomState");
+        patientFhir.addAddress().setPostalCode("80-010");
+        patientFhir.addAddress().setCountry("RandomCountry");
+        patientFhir.addAddress().addLine(patientHL7.getStreet());
+
+        /*
         Organization org = new Organization();
         org.setId("Organization/65546");
         org.getNameElement().setValue("Contained Test Organization");
@@ -58,8 +122,9 @@ public class MapperFhir {
         patient.addAddress().setState("RandomState");
         patient.addAddress().setPostalCode("80-010");
         patient.addAddress().setCountry("RandomCountry");
+        */
 
-        String encoded = ctx.newJsonParser().encodeResourceToString(patient);
+        String encoded = ctx.newJsonParser().encodeResourceToString(patientFhir);
         System.out.println(encoded);
     }
 }
