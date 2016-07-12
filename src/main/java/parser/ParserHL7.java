@@ -16,6 +16,12 @@ public class ParserHL7 {
                 "EVN|A28|20100705100131\r" +
                 "PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||4444444444|5555555555||M|||||||||||||20160709224441|Y\r" +
                 "PD1|||PracticeName^^PracticeCode|GPCode^GPSurname^GPForename^^^DR^^NATGP\r";
+        /*
+        String msg = "MSH|^~\\&|IPM|LSP|RAD|RGQ|20100705100137||ADT^A28|765043596|P|2.4|12478673\r" +
+        "EVN|A28|20100705100131\r" +
+        "PID|||654321^^^RGQ^MR~^^^NHS^NH||Testowy^Marian^^^Mr||20160711000000|Male|||Gnilna^12B^Gdansk^Pomorskie^80-001||11111111|2222222||||||||||||||||N\r" +
+        "PD1|||GPName^^GPCode|GPCode^PractitionerSurname^PractitionerForename^^^DR^^NATGP\r";
+        */
 
         HapiContext context = new DefaultHapiContext();
         context.getParserConfiguration().setValidating(false);
@@ -60,6 +66,7 @@ public class ParserHL7 {
             System.out.println("\tidentifier: " + cx);
             System.out.println("\tidentifier tokens: " + cx.getID() + " "
                     + cx.getAssigningAuthority().getNamespaceID() + " "
+                    + cx.getID()
                     + cx.getIdentifierTypeCode());
         }
 

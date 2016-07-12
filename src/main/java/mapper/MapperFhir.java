@@ -14,8 +14,14 @@ public class MapperFhir {
         FhirContext ctx = FhirContext.forDstu3();
         Patient patientFhir = new Patient();
 
+        /*
+            information about mapping HL7/PID-3 into identifier/system is needed!
+            check http://hl7.org/fhir/identifier-registry.html
+            and http://hl7.org/fhir/terminologies-v2.html
+            right now 'http://hl7.org/fhir/sid/us-ssn' hardcoded
+        */
         patientFhir.addIdentifier()
-                .setSystem(patientHL7.getPatientIdentifierNamespace() + " " + patientHL7.getPatientIdentifierTypeCode())
+                .setSystem("http://hl7.org/fhir/sid/us-ssn")
                 .setValue(patientHL7.getPatientIdentifierId());
 
         patientFhir.addName()
@@ -46,14 +52,18 @@ public class MapperFhir {
             patientFhir.setDeceased(new DateTimeType().setValue(patientHL7.getPatientDeceasedDate().getTimeOfAnEvent().getValueAsDate()));
         }
 
-        patientFhir.getMaritalStatus().addCoding().setCode(patientHL7.getMartialStatus().getIdentifier().toString());
+        patientFhir.getMaritalStatus()
+                .addCoding().setSystem("http://hl7.org/fhir/v3/MaritalStatus")
+                .setCode(patientHL7.getMartialStatus().getIdentifier().toString());
+
 
         patientFhir.addAddress().addLine(patientHL7.getStreet());
         patientFhir.addAddress().setCity(patientHL7.getCity());
         patientFhir.addAddress().setState(patientHL7.getState());
         patientFhir.addAddress().setPostalCode(patientHL7.getPostalCode());
 
-        String encoded = ctx.newJsonParser().encodeResourceToString(patientFhir);
-        System.out.println(encoded);
+        String jsonEncoded = ctx.newJsonParser().encodeResourceToString(patientFhir);
+        String xmlEncoded = ctx.newXmlParser().encodeResourceToString(patientFhir);
+        System.out.println(jsonEncoded);
     }
 }
