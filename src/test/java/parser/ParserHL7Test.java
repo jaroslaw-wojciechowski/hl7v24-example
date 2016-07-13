@@ -1,5 +1,13 @@
 package parser;
 
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v24.message.ADT_A05;
+import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
+import ca.uhn.hl7v2.parser.Parser;
 import org.hl7.fhir.dstu3.model.DateTimeType;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.TemporalPrecisionEnum;
@@ -15,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 public class ParserHL7Test {
     private static Patient patient;
+    private static Message hapiMsg;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -23,7 +32,25 @@ public class ParserHL7Test {
                 "PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||4444444444|5555555555||M|||||||||||||20160709224441|Y\r" +
                 "PD1|||PracticeName^^PracticeCode|GPCode^GPSurname^GPForename^^^DR^^NATGP\r";
 
-        patient = new ParserHL7().parseHl7ToFhirObject(msg);
+        HapiContext context = new DefaultHapiContext();
+        context.getParserConfiguration().setValidating(false);
+        //Parser p = context.getGenericParser();
+        Parser p = context.getPipeParser();
+
+        try {
+            hapiMsg = p.parse(msg);
+        } catch (EncodingNotSupportedException e) {
+            e.printStackTrace();
+        } catch (HL7Exception e) {
+            e.printStackTrace();
+        }
+
+        ADT_A05 adtMsg = (ADT_A05) hapiMsg;
+        patient = new ParserHL7().parseHl7ToFhirObject(adtMsg);
+
+        FhirContext ctx = FhirContext.forDstu3();
+        String jsonEncoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
+        System.out.println(jsonEncoded);
     }
 
     @Test

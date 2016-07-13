@@ -1,13 +1,8 @@
 package parser;
 
-import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.datatype.*;
 import ca.uhn.hl7v2.model.v24.message.ADT_A05;
-import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
-import ca.uhn.hl7v2.parser.Parser;
 import org.hl7.fhir.dstu3.exceptions.FHIRException;
 import org.hl7.fhir.dstu3.model.*;
 
@@ -16,26 +11,8 @@ public class ParserHL7 {
     private static final String IDENTIFIER_SYSTEM = "http://hl7.org/fhir/sid/us-ssn";
     private static final String MARITAL_STATUS_SYSTEM = "http://hl7.org/fhir/v3/MaritalStatus";
 
-    public Patient parseHl7ToFhirObject(String msg) throws FHIRException, HL7Exception {
+    public Patient parseHl7ToFhirObject(ADT_A05 adtMsg) throws FHIRException, HL7Exception {
         Patient patientFhir = new Patient();
-
-        HapiContext context = new DefaultHapiContext();
-        context.getParserConfiguration().setValidating(false);
-        //Parser p = context.getGenericParser();
-        Parser p = context.getPipeParser();
-
-        Message hapiMsg;
-        try {
-            hapiMsg = p.parse(msg);
-        } catch (EncodingNotSupportedException e) {
-            e.printStackTrace();
-            return null;
-        } catch (HL7Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        ADT_A05 adtMsg = (ADT_A05) hapiMsg;
 
         //identifier PID-3
         CX[] identifiers = adtMsg.getPID().getPid3_PatientIdentifierList();
@@ -109,13 +86,6 @@ public class ParserHL7 {
                 .addCoding().setSystem(MARITAL_STATUS_SYSTEM)
                 .setCode(maritalStatus.getIdentifier().toString());
 
-        // only for debug
-        /*
-            FhirContext ctx = FhirContext.forDstu3();
-            String jsonEncoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patientFhir);
-            String xmlEncoded = ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(patientFhir);
-            System.out.println(jsonEncoded);
-        */
         return patientFhir;
     }
 }
