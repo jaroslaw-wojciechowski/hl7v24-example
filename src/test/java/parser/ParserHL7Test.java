@@ -35,10 +35,12 @@ public class ParserHL7Test {
     @Test
     public void namesTest() throws Exception {
         String nameGiven = patient.getName().get(0).getGiven().get(0).toString();
+        String nameSecond = patient.getName().get(0).getGiven().get(1).toString();
         String nameFamily = patient.getName().get(0).getFamily().get(0).toString();
         String namePrefix = patient.getName().get(0).getPrefix().get(0).toString();
         String nameSuffix = patient.getName().get(0).getSuffix().get(0).toString();
         assertTrue("Wrong given name", nameGiven.equals("Jan"));
+        assertTrue("Wrong second name", nameSecond.equals("Maria"));
         assertTrue("Wrong family name", nameFamily.equals("Kowalski"));
         assertTrue("Wrong name prefix", namePrefix.equals("Mr"));
         assertTrue("Wrong name suffix", nameSuffix.equals("III"));

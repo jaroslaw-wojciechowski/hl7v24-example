@@ -12,6 +12,10 @@ import org.hl7.fhir.dstu3.exceptions.FHIRException;
 import org.hl7.fhir.dstu3.model.*;
 
 public class ParserHL7 {
+    //to be defined:
+    private static final String IDENTIFIER_SYSTEM = "http://hl7.org/fhir/sid/us-ssn";
+    private static final String MARITAL_STATUS_SYSTEM = "http://hl7.org/fhir/v3/MaritalStatus";
+
     public Patient parseHl7ToFhirObject(String msg) throws FHIRException, HL7Exception {
         Patient patientFhir = new Patient();
 
@@ -37,7 +41,7 @@ public class ParserHL7 {
         CX[] identifiers = adtMsg.getPID().getPid3_PatientIdentifierList();
         for (CX id : identifiers) {
             patientFhir.addIdentifier()
-                    .setSystem("http://hl7.org/fhir/sid/us-ssn")
+                    .setSystem(IDENTIFIER_SYSTEM)
                     .setValue(id.getID().toString());
         }
 
@@ -46,6 +50,7 @@ public class ParserHL7 {
         for (XPN patientName : patientNames) {
             patientFhir.addName()
                     .addGiven(patientName.getGivenName().toString())
+                    .addGiven(patientName.getSecondAndFurtherGivenNamesOrInitialsThereof().toString())
                     .addFamily(patientName.getFamilyName().getSurname().toString())
                     .addPrefix(patientName.getPrefixEgDR().toString())
                     .addSuffix(patientName.getSuffixEgJRorIII().toString());
@@ -101,17 +106,16 @@ public class ParserHL7 {
         //maritalStatus	PID-16
         CE maritalStatus = adtMsg.getPID().getMaritalStatus();
         patientFhir.getMaritalStatus()
-                .addCoding().setSystem("http://hl7.org/fhir/v3/MaritalStatus")
+                .addCoding().setSystem(MARITAL_STATUS_SYSTEM)
                 .setCode(maritalStatus.getIdentifier().toString());
 
         // only for debug
         /*
             FhirContext ctx = FhirContext.forDstu3();
-            String jsonEncoded = ctx.newJsonParser().encodeResourceToString(patientFhir);
-            String xmlEncoded = ctx.newXmlParser().encodeResourceToString(patientFhir);
-            System.out.println(xmlEncoded);
+            String jsonEncoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patientFhir);
+            String xmlEncoded = ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(patientFhir);
+            System.out.println(jsonEncoded);
         */
-
         return patientFhir;
     }
 }
