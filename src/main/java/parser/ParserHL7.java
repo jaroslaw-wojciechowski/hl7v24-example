@@ -33,6 +33,7 @@ public class ParserHL7 {
 
         ADT_A05 adtMsg = (ADT_A05) hapiMsg;
 
+        //identifier PID-3
         CX[] identifiers = adtMsg.getPID().getPid3_PatientIdentifierList();
         for (CX id : identifiers) {
             patientFhir.addIdentifier()
@@ -91,6 +92,7 @@ public class ParserHL7 {
         for (XAD address : addresses) {
             patientFhir.addAddress()
                     .addLine(address.getStreetAddress().getStreetOrMailingAddress().toString())
+                    .addLine(address.getOtherDesignation().toString())
                     .setCity(address.getCity().toString())
                     .setState(address.getStateOrProvince().toString())
                     .setPostalCode(address.getZipOrPostalCode().toString());
