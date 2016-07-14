@@ -1,6 +1,5 @@
 package parser;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
@@ -8,16 +7,9 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ADT_A05;
 import ca.uhn.hl7v2.parser.EncodingNotSupportedException;
 import ca.uhn.hl7v2.parser.Parser;
-import org.hl7.fhir.dstu3.model.DateTimeType;
 import org.hl7.fhir.dstu3.model.Patient;
-import org.hl7.fhir.dstu3.model.TemporalPrecisionEnum;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
 
 import static org.junit.Assert.assertTrue;
 
@@ -34,7 +26,6 @@ public class ParserHL7Test {
 
         HapiContext context = new DefaultHapiContext();
         context.getParserConfiguration().setValidating(false);
-        //Parser p = context.getGenericParser();
         Parser p = context.getPipeParser();
 
         try {
@@ -48,9 +39,11 @@ public class ParserHL7Test {
         ADT_A05 adtMsg = (ADT_A05) hapiMsg;
         patient = new ParserHL7().parseHl7ToFhirObject(adtMsg);
 
-        FhirContext ctx = FhirContext.forDstu3();
-        String jsonEncoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
-        System.out.println(jsonEncoded);
+        /*
+            FhirContext ctx = FhirContext.forDstu3();
+            String jsonEncoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
+            System.out.println(jsonEncoded);
+        */
     }
 
     @Test
@@ -61,6 +54,7 @@ public class ParserHL7Test {
 
     @Test
     public void namesTest() throws Exception {
+
         String nameGiven = patient.getName().get(0).getGiven().get(0).toString();
         String nameSecond = patient.getName().get(0).getGiven().get(1).toString();
         String nameFamily = patient.getName().get(0).getFamily().get(0).toString();
@@ -75,12 +69,14 @@ public class ParserHL7Test {
 
     @Test
     public void telecomTest() throws Exception {
-        assertTrue("Wrong 1st telecom value", patient.getTelecom().get(0).getValue().equals("4444444444"));
-        assertTrue("Wrong 1st telecom system", patient.getTelecom().get(0).getSystem().toString().equals("PHONE"));
-        assertTrue("Wrong 1st telecom use", patient.getTelecom().get(0).getUse().toString().equals("HOME"));
-        assertTrue("Wrong 2nd telecom value", patient.getTelecom().get(1).getValue().equals("5555555555"));
-        assertTrue("Wrong 2nd telecom system", patient.getTelecom().get(1).getSystem().toString().equals("PHONE"));
-        assertTrue("Wrong 2nd telecom use", patient.getTelecom().get(1).getUse().toString().equals("WORK"));
+        if (patient.getTelecom().size() > 0) {
+            assertTrue("Wrong 1st telecom value", patient.getTelecom().get(0).getValue().equals("4444444444"));
+            assertTrue("Wrong 1st telecom system", patient.getTelecom().get(0).getSystem().toString().equals("PHONE"));
+            assertTrue("Wrong 1st telecom use", patient.getTelecom().get(0).getUse().toString().equals("HOME"));
+            assertTrue("Wrong 2nd telecom value", patient.getTelecom().get(1).getValue().equals("5555555555"));
+            assertTrue("Wrong 2nd telecom system", patient.getTelecom().get(1).getSystem().toString().equals("PHONE"));
+            assertTrue("Wrong 2nd telecom use", patient.getTelecom().get(1).getUse().toString().equals("WORK"));
+        }
     }
 
     @Test
@@ -95,11 +91,7 @@ public class ParserHL7Test {
 
     @Test
     public void deceasedTest() throws Exception {
-        DateFormat dt = new SimpleDateFormat("yyyyMMddhhmmss");
-        Date expectedDate = dt.parse("20160709224441");
-        DateTimeType expectedDtt = new DateTimeType(expectedDate, TemporalPrecisionEnum.SECOND, TimeZone.getDefault());
-        DateTimeType resultDtt = patient.getDeceasedDateTimeType();
-        assertTrue("Wrong date of deceased", expectedDtt.getValueAsString().equals(resultDtt.getValueAsString()));
+        assertTrue("Wrong deceased indicator", patient.getDeceasedBooleanType().getValue().equals(true));
     }
 
     @Test

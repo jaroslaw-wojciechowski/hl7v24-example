@@ -52,7 +52,9 @@ public class ParserHL7 {
 
         //gender PID-8
         IS gender = adtMsg.getPID().getAdministrativeSex();
-        patientFhir.setGender(Enumerations.AdministrativeGender.fromCode(gender.getValue().toLowerCase()));
+        if(!gender.isEmpty()) {
+            patientFhir.setGender(Enumerations.AdministrativeGender.fromCode(gender.getValue().toLowerCase()));
+        }
 
         //birthDate	PID-7
         TS dob = adtMsg.getPID().getDateTimeOfBirth();
@@ -60,13 +62,8 @@ public class ParserHL7 {
 
         //deceased[x] PID-30 (bool) and PID-29 (datetime)
         ID deceasedInd = adtMsg.getPID().getPatientDeathIndicator();
-        TS deceasedDate = adtMsg.getPID().getPatientDeathDateAndTime();
-        //deceased can be date or boolean:
         if ((!deceasedInd.isEmpty()) && (deceasedInd.toString().equals("Y"))) {
             patientFhir.setDeceased(new BooleanType().setValue(true));
-        }
-        if (!deceasedDate.isEmpty()) {
-            patientFhir.setDeceased(new DateTimeType().setValue(deceasedDate.getTimeOfAnEvent().getValueAsDate()));
         }
 
         //address PID-11
@@ -82,9 +79,11 @@ public class ParserHL7 {
 
         //maritalStatus	PID-16
         CE maritalStatus = adtMsg.getPID().getMaritalStatus();
-        patientFhir.getMaritalStatus()
-                .addCoding().setSystem(MARITAL_STATUS_SYSTEM)
-                .setCode(maritalStatus.getIdentifier().toString());
+        if (!maritalStatus.isEmpty()) {
+            patientFhir.getMaritalStatus()
+                    .addCoding().setSystem(MARITAL_STATUS_SYSTEM)
+                    .setCode(maritalStatus.getIdentifier().toString());
+        }
 
         return patientFhir;
     }
