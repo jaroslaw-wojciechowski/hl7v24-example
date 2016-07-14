@@ -4,7 +4,10 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v24.datatype.*;
 import ca.uhn.hl7v2.model.v24.message.ADT_A05;
 import org.hl7.fhir.dstu3.exceptions.FHIRException;
-import org.hl7.fhir.dstu3.model.*;
+import org.hl7.fhir.dstu3.model.BooleanType;
+import org.hl7.fhir.dstu3.model.ContactPoint;
+import org.hl7.fhir.dstu3.model.Enumerations;
+import org.hl7.fhir.dstu3.model.Patient;
 
 public class ParserHL7 {
     //to be defined:
@@ -52,7 +55,7 @@ public class ParserHL7 {
 
         //gender PID-8
         IS gender = adtMsg.getPID().getAdministrativeSex();
-        if(!gender.isEmpty()) {
+        if (!gender.isEmpty()) {
             patientFhir.setGender(Enumerations.AdministrativeGender.fromCode(gender.getValue().toLowerCase()));
         }
 

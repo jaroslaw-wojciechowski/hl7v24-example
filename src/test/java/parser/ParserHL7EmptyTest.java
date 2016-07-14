@@ -38,11 +38,6 @@ public class ParserHL7EmptyTest {
 
         ADT_A05 adtMsg = (ADT_A05) hapiMsg;
         patient = new ParserHL7().parseHl7ToFhirObject(adtMsg);
-        /*
-            FhirContext ctx = FhirContext.forDstu3();
-            String jsonEncoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
-            System.out.println(jsonEncoded);
-        */
     }
 
     @Test

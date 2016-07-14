@@ -16,14 +16,14 @@ public class MainApp {
 
     private static final String msg = "MSH|^~\\&|IPM|LSP|RAD|RGQ|20100705100137||ADT^A28|765043596|P|2.4|12478673\r" +
             "EVN|A28|20100705100131\r" +
-            "PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||4444444444|5555555555||M|||||||||||||20160709224441|Y\r" +
-            "PD1|||PracticeName^^PracticeCode|GPCode^GPSurname^GPForename^^^DR^^NATGP\r";
+            "PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||(444)444-4444|(555)555-5555||M|||||||||||||20160709224441|Y\r" +
+            "PD1|||PracticeName^^9999999999|GPCode^GPSurname^GPForename^^^DR^^NATGP\r";
 
     public static void main(String[] args) {
         slf4jLogger.info("HAPIv24 example");
         try {
             HapiContext context = new DefaultHapiContext();
-            context.getParserConfiguration().setValidating(false);
+            context.getParserConfiguration().setValidating(true);
             Parser p = context.getPipeParser();
 
             hapiMsg = p.parse(msg);

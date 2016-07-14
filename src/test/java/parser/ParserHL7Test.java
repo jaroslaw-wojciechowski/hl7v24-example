@@ -21,11 +21,11 @@ public class ParserHL7Test {
     public static void setUpClass() throws Exception {
         String msg = "MSH|^~\\&|IPM|LSP|RAD|RGQ|20100705100137||ADT^A28|765043596|P|2.4|12478673\r" +
                 "EVN|A28|20100705100131\r" +
-                "PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||4444444444|5555555555||M|||||||||||||20160709224441|Y\r" +
-                "PD1|||PracticeName^^PracticeCode|GPCode^GPSurname^GPForename^^^DR^^NATGP\r";
+                "PID|||111111^^^RGQ^MR~2222222222^^^NHS^NH||Kowalski^Jan^Maria^III^Mr||20110105000000|Male|||RandomStreet^128B^RandomCity^RandomState^3333||(444)444-4444|(555)555-5555||M|||||||||||||20160709224441|Y\r" +
+                "PD1|||PracticeName^^9999999999|GPCode^GPSurname^GPForename^^^DR^^NATGP\r";
 
         HapiContext context = new DefaultHapiContext();
-        context.getParserConfiguration().setValidating(false);
+        context.getParserConfiguration().setValidating(true);
         Parser p = context.getPipeParser();
 
         try {
@@ -38,12 +38,6 @@ public class ParserHL7Test {
 
         ADT_A05 adtMsg = (ADT_A05) hapiMsg;
         patient = new ParserHL7().parseHl7ToFhirObject(adtMsg);
-
-        /*
-            FhirContext ctx = FhirContext.forDstu3();
-            String jsonEncoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
-            System.out.println(jsonEncoded);
-        */
     }
 
     @Test
@@ -70,10 +64,10 @@ public class ParserHL7Test {
     @Test
     public void telecomTest() throws Exception {
         if (patient.getTelecom().size() > 0) {
-            assertTrue("Wrong 1st telecom value", patient.getTelecom().get(0).getValue().equals("4444444444"));
+            assertTrue("Wrong 1st telecom value", patient.getTelecom().get(0).getValue().equals("(444)444-4444"));
             assertTrue("Wrong 1st telecom system", patient.getTelecom().get(0).getSystem().toString().equals("PHONE"));
             assertTrue("Wrong 1st telecom use", patient.getTelecom().get(0).getUse().toString().equals("HOME"));
-            assertTrue("Wrong 2nd telecom value", patient.getTelecom().get(1).getValue().equals("5555555555"));
+            assertTrue("Wrong 2nd telecom value", patient.getTelecom().get(1).getValue().equals("(555)555-5555"));
             assertTrue("Wrong 2nd telecom system", patient.getTelecom().get(1).getSystem().toString().equals("PHONE"));
             assertTrue("Wrong 2nd telecom use", patient.getTelecom().get(1).getUse().toString().equals("WORK"));
         }
